@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saarthi - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        .welcome-animation {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .quote-rotation {
+            min-height: 3.5em;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .quote-rotation p {
+            display: none;
+            animation: fadeInUp 0.8s ease-out;
+            margin: 0;
+            padding: 0.5em 0;
+        }
+
+        .quote-rotation p:first-child { display: block; }
+
+        /* Cursive font class for the site title */
+        .font-cursive {
+            font-family: 'Pacifico', cursive;
+        }
+
+        :root{
+            /* Default theme */
+            --bg: #ffffff;
+            --muted: #6b7280;
+            --accent: #4f46e5;
+            --card-bg: rgba(255,255,255,0.96);
+            --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+            --accent-soft: rgba(79,70,229,0.08);
+        }
+
+        /* Base */
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg);
+            color: #102a2b; /* dark, readable text */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: -0.011em;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Header uses the accent color */
+        header {
+            background: linear-gradient(90deg, rgba(15,76,92,1) 0%, rgba(35,101,108,1) 100%);
+            box-shadow: 0 6px 18px rgba(16,42,43,0.06);
+        }
+        header h1 { letter-spacing: -0.5px; color: #fffdf1; }
+
+        /* Cards */
+        .rounded-2xl { border-radius: 1.25rem; }
+        .shadow-xl { box-shadow: 0 10px 25px rgba(16,42,43,0.06); }
+        .shadow-2xl { box-shadow: 0 20px 40px rgba(16,42,43,0.09); }
+        /* Make .bg-white adopt the card background so components look cohesive */
+        .bg-white { background-color: var(--card-bg); }
+        .card-hover:hover { transform: translateY(-6px); transition: transform .25s ease; }
+
+        /* Chat bubble refinements */
+        .chat-message { max-width: 78%; padding: .85rem 1.1rem; border-radius: 1.25rem; }
+        .user-message { background: linear-gradient(90deg,var(--accent), #1c7a80); color:#fff; }
+        .ai-message { background: #f6f5f2; color: #102a2b; }
+
+        /* Login overlay specific */
+        #login-overlay { z-index: 1000; }
+        #login-overlay .bg-white {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,253,241,0.7);
+            -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px -12px rgba(16,42,43,0.08);
+        }
+        #login-overlay .auth-tab { 
+            cursor: pointer; 
+            padding: .5rem 1rem; 
+            border-radius: .75rem; 
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1); 
+            letter-spacing: -0.01em;
+        }
+        #login-overlay .auth-tab.active { 
+            background: var(--accent) !important; 
+            color: var(--bg) !important; 
+            box-shadow: 0 8px 24px var(--accent-soft);
+            transform: translateY(-1px);
+        }
+
+        /* Inputs and buttons */
+        input, textarea, select { 
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+            color: #102a2b;
+            background: #fff; /* keep inputs crisp */
+        }
+        input:focus, textarea:focus, select:focus { 
+            box-shadow: 0 8px 24px rgba(15,76,92,0.12);
+            transform: translateY(-1px);
+            border-color: var(--accent);
+        }
+        input::placeholder {
+            color: #9aa29a;
+            font-size: 0.95rem;
+        }
+        button { 
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.01em;
+        }
+        button:active { 
+            transform: translateY(1px);
+        }
+        .form-label {
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        /* Typewriter effect */
+        .typewriter {
+            border-right: 2px solid var(--accent);
+            width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(40) 1s forwards,
+                       blink 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent) }
+        }
+
+        /* Tables */
+        table th { background: #eef2ff; }
+
+        /* Footer */
+        footer { background: transparent; color: var(--muted); }
+
+        /* Utilities */
+        .muted { color: var(--muted); }
+        .accent { color: var(--accent); }
+
+        /* Tiny animation */
+        @keyframes floaty { 0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)} }
+        .floaty { animation: floaty 5s ease-in-out infinite; }
+
+        /* Scrollbars */
+        .chat-container::-webkit-scrollbar { width: 10px; }
+        .chat-container::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 10px; }
+        .chat-container::-webkit-scrollbar-track { background: transparent; }
+
+        /* Typewriter effect */
+        .typewriter {
+            color: transparent;
+            position: relative;
+            width: fit-content;
+        }
+
+        .typewriter::before {
+            content: "Welcome to your mental wellness companion";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--accent);
+            overflow: hidden;
+            border-right: 3px solid var(--accent);
+            white-space: nowrap;
+            animation: typing 3s steps(38) forwards,
+                     blink .8s infinite;
+            background: linear-gradient(90deg, 
+                rgba(15,76,92,1) 0%, 
+                rgba(35,101,108,1) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        @keyframes typing {
+            0% { width: 0 }
+            100% { width: 100% }
+        }
+
+        @keyframes blink {
+            0%, 100% { border-color: transparent }
+            50% { border-color: var(--accent) }
+        }
+
+        /* Override some Tailwind utility colors to match the new theme */
+        .bg-indigo-600 { background-color: var(--accent) !important; }
+        .hover\:bg-indigo-700:hover { background-color: #0b3f49 !important; }
+        .bg-emerald-600 { background-color: var(--accent) !important; }
+        .hover\:bg-emerald-700:hover { background-color: #0b3f49 !important; }
+        .bg-amber-600 { background-color: var(--accent) !important; }
+        .hover\:bg-amber-700:hover { background-color: #0b3f49 !important; }
+        .text-indigo-600 { color: var(--accent) !important; }
+        .progress-ring { stroke: var(--accent); }
+
+        /* Scrollbar matches theme */
+        .chat-container::-webkit-scrollbar-thumb { background: rgba(15,76,92,0.18); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Login overlay with background image -->
+    <div id="login-overlay" class="fixed inset-0 flex items-center justify-start z-[100]" style="background-image: url('BG.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <!-- Dark veil to improve contrast -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <!-- Left-aligned login card container; responsive spacing -->
+        <div class="relative w-full max-w-md m-4 ml-6 md:ml-16 lg:ml-24">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl w-full">
+                <div class="text-left mb-6">
+                    <h1 class="text-5xl font-cursive text-amber-600 mb-2 tracking-tight">Saarthi</h1>
+                    <div class="text-lg leading-relaxed">
+                        <span class="typewriter">Welcome to your mental wellness companion</span>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex items-center space-x-3 mb-6">
+                    <button type="button" class="auth-tab px-4 py-2 rounded-lg bg-indigo-600 text-white text-base font-semibold transition-all duration-300 hover:shadow-lg" data-target="signin-form">Sign In</button>
+                    <button type="button" class="auth-tab px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-base font-semibold transition-all duration-300 hover:bg-gray-200" data-target="signup-form">Sign Up</button>
+                
+                </div>
+
+                <div id="login-error" class="text-red-500 text-sm text-left hidden mb-3"></div>
+
+                <!-- Sign In Form -->
+                <form id="signin-form" class="space-y-4">
+                    <div>
+                        <label for="signin-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signin-email" required placeholder="you@domain.com" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="signin-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signin-password" required placeholder="Password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-indigo-700">Sign In</button>
+                        <button type="button" class="text-sm text-indigo-600 auth-tab" data-target="forgot-form">Forgot password?</button>
+                    </div>
+                </form>
+
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="space-y-4 hidden">
+                    <div>
+                        <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+                        <input type="text" id="signup-name" required placeholder="Your name" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signup-email" required placeholder="you@domain.com" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signup-password" required placeholder="Create a password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="signup-confirm" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="signup-confirm" required placeholder="Confirm password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-green-700">Sign Up</button>
+                        <button type="button" class="text-sm text-indigo-600 auth-tab" data-target="signin-form">Already have an account?</button>
+                    </div>
+                </form>
+
+                <!-- Forgot Password Form -->
+                <form id="forgot-form" class="space-y-4 hidden">
+                    <div>
+                        <label for="forgot-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="forgot-email" required placeholder="you@domain.com" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="forgot-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                        <input type="password" id="forgot-password" required placeholder="New password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="forgot-confirm" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                        <input type="password" id="forgot-confirm" required placeholder="Confirm new password" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-yellow-600 text-white font-bold py-2 px-6 rounded-full shadow hover:bg-yellow-700">Reset Password</button>
+                        <button type="button" class="text-sm text-indigo-600 auth-tab" data-target="signin-form">Back to Sign In</button>
+                    </div>
+                </form>
+
+                <!-- Continue without login placed last -->
+                <div class="mt-4">
+                    <button id="continue-btn" type="button" class="w-full bg-white border border-indigo-200 text-indigo-700 py-2 rounded-full hover:bg-indigo-50">Continue without login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-indigo-600 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center text-white">
+            <div class="flex items-center space-x-3">
+                <img src="LOGO.jpg" alt="Saarthi Logo" class="h-12 w-12 object-contain rounded-full bg-white p-1">
+                <div class="flex flex-col">
+                    <h1 class="text-3xl  font-cursive">Saarthi</h1>
+                    <span class="text-sm text-indigo-200">by Nxyen</span>
+                </div>
+            </div>
+            <nav class="mt-4 md:mt-0">
+                <ul class="flex items-center space-x-6 text-sm md:text-base font-medium">
+                    <li><a href="#dashboard" class="hover:text-indigo-200 transition-colors duration-300">Dashboard</a></li>
+                    <li><a href="#chat" class="hover:text-indigo-200 transition-colors duration-300">AI Support</a></li>
+                    <li><a href="#resources" class="hover:text-indigo-200 transition-colors duration-300">Resources</a></li>
+                    <li><a href="#journal" class="hover:text-indigo-200 transition-colors duration-300">Journal</a></li>
+                    <li><a href="#stress-check" class="hover:text-indigo-200 transition-colors duration-300">Stress Check</a></li>
+                    <li><a href="#booking" class="hover:text-indigo-200 transition-colors duration-300">Booking</a></li>
+                    <li><a href="#admin" class="hover:text-indigo-200 transition-colors duration-300">Admin</a></li>
+                    <li>
+                        <div class="flex items-center space-x-2">
+                            <div class="bg-white text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">R</div>
+                            <button id="auth-btn" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">Logout</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+    
+    <main class="flex-grow container mx-auto p-4 md:p-8">
+        
+        <section id="dashboard" class="section-content">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8 mb-8">
+                <div class="flex-grow">
+                    <h2 class="text-3xl font-bold text-gray-800 welcome-animation" id="welcomeMessage">Welcome back, User <span role="img" aria-label="wave">👋</span></h2>
+                    <p class="text-gray-600 mt-2 welcome-animation" style="animation-delay: 0.2s">How are you feeling today? Your mental wellness journey continues here.</p>
+                    
+                    <div class="quote-rotation mt-4 text-gray-600 italic welcome-animation" style="animation-delay: 0.4s">
+                        <p class="text-sm">"Your mental health is a priority. Your happiness is essential. Your self-care is a necessity."</p>
+                        <p class="text-sm">"Small steps every day lead to big changes. You're making progress."</p>
+                        <p class="text-sm">"You don't have to see the whole staircase, just take the first step."</p>
+                        <p class="text-sm">"Recovery is not a race. You don't have to feel guilty for taking your time."</p>
+                    </div>
+                </div>
+                <img src= "js/main_pic.jpg" alt="Scenic mountain view" class="w-full md:w-1/6 rounded-xl shadow-md welcome-animation" style="animation-delay: 0.6s" height="60" width="30">
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">Quick Actions</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                            <a href="#chat" class="icon-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-indigo-500 mx-auto mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                <p class="font-medium text-gray-700 text-sm">AI First-Aid</p>
+                                <p class="text-gray-500 text-xs mt-1">Get immediate support and guidance</p>
+                            </a>
+                            <a href="#booking" class="icon-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-indigo-500 mx-auto mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25m-4.5 9V3.75m-3 9v-3m-3 9V12m-3.75 9h15A2.25 2.25 0 0 0 21.75 18V6a2.25 2.25 0 0 0-2.25-2.25H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25Zm.006-2.25L18 12 6.756 5.25" />
+                                </svg>
+                                <p class="font-medium text-gray-700 text-sm">Book Session</p>
+                                <p class="text-gray-500 text-xs mt-1">Schedule confidential appointments</p>
+                            </a>
+                            <a href="#journal" class="icon-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-indigo-500 mx-auto mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                </svg>
+                                <p class="font-medium text-gray-700 text-sm">Daily Journal</p>
+                                <p class="text-gray-500 text-xs mt-1">Reflect on your thoughts and feelings</p>
+                            </a>
+                            <a href="#stress-check" class="icon-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-indigo-500 mx-auto mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75l16.5 16.5m0-16.5L3.75 20.25" />
+                                </svg>
+                                <p class="font-medium text-gray-700 text-sm">Stress Check</p>
+                                <p class="text-gray-500 text-xs mt-1">Monitor your current stress levels</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-2xl font-semibold text-gray-800">AI First-Aid Support</h3>
+                            <span class="text-xs text-green-500 font-bold px-2 py-1 bg-green-100 rounded-full">Available 24/7</span>
+                        </div>
+                        <p class="text-gray-600 mb-6">Start a conversation with our AI mental health assistant.</p>
+                        <a href="#chat" class="w-full inline-block text-center bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300">
+                            Start New Conversation
+                        </a>
+                    </div>
+
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-2xl font-semibold text-gray-800">Recommended Resources</h3>
+                            <a href="#resources" class="text-indigo-600 hover:underline font-medium">View All</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-bold text-gray-800">Managing Anxiety Through Mindfulness</h4>
+                                <p class="text-sm text-gray-600">Learn evidence-based techniques to reduce anxiety and stress through mindful practices.</p>
+                                <a href="#resources" class="inline-block mt-2 text-indigo-600 font-semibold text-sm hover:underline">
+                                    <button class="bg-indigo-100 text-indigo-600 text-xs font-bold py-1 px-3 rounded-full hover:bg-indigo-200">Start reading</button>
+                                </a>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-bold text-gray-800">Building Healthy Sleep Habits</h4>
+                                <p class="text-sm text-gray-600">Discover how proper sleep hygiene can significantly improve your mental wellbeing.</p>
+                                <a href="#resources" class="inline-block mt-2 text-indigo-600 font-semibold text-sm hover:underline">
+                                    <button class="bg-indigo-100 text-indigo-600 text-xs font-bold py-1 px-3 rounded-full hover:bg-indigo-200">Start now</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Your Wellness Dashboard</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-2">Today's Mood</p>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl">😩</div>
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl">😕</div>
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl bg-gray-200">😐</div>
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl">🙂</div>
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xl">😁</div>
+                                    <span class="text-gray-500 text-sm font-medium">Okay</span>
+                                </div>
+                            </div>
+                            <a href="#stress-check" class="block group cursor-pointer">
+                                <p class="text-sm font-medium text-gray-600 mb-2">Stress Level</p>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex-grow h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-green-500 rounded-full w-2/3 group-hover:w-3/4 transition-all duration-300"></div>
+                                    </div>
+                                    <span class="text-gray-500 text-sm font-medium">Moderate</span>
+                                </div>
+                            </a>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-2">Sleep Quality</p>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex-grow h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-indigo-500 rounded-full w-4/5"></div>
+                                    </div>
+                                    <span class="text-gray-500 text-sm font-medium">7/10</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-gray-600">Health Integration</span>
+                                    <span class="text-green-500 text-xs font-bold px-2 py-1 bg-green-100 rounded-full">Connected</span>
+                                </div>
+                                <a href="#stress-check" class="text-indigo-600 text-sm font-medium hover:underline">View</a>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-red-500">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.213 6.957 11.378 9 15 .005-.005.006-.007.006-.007s.002-.002.002-.002a21.366 21.366 0 0 0 9.002-15Z" />
+                                        </svg>
+                                        <p class="text-sm font-medium">Heart Rate</p>
+                                    </div>
+                                    <p id="hr-display" class="text-xl font-bold text-gray-800 mt-1">-- <span class="text-sm font-medium text-gray-500">bpm</span></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-indigo-500">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 20.25a9.72 9.72 0 0 1-3.752-.752V9.563C14.735 9.102 14.28 8.875 13.815 8.875c-.68 0-1.23.55-1.23 1.23s.55 1.23 1.23 1.23h1.23v.75a1.23 1.23 0 0 1-1.23 1.23h-1.23a.75.75 0 0 0-.75.75c0 .414.336.75.75.75h1.23a1.23 1.23 0 0 1 1.23 1.23v1.23a.75.75 0 0 0 1.5 0v-1.23c0-.68-.55-1.23-1.23-1.23H13.815a1.23 1.23 0 0 1-1.23-1.23v-2.25c0-.465.35-1.235.918-1.571L21.752 15.002Z" />
+                                        </svg>
+                                        <p class="text-sm font-medium">Sleep</p>
+                                    </div>
+                                    <p class="text-xl font-bold text-gray-800 mt-1">7h 14m</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-semibold text-gray-800">Upcoming Sessions</h3>
+                                <a href="#booking" class="text-indigo-600 hover:underline font-medium">View All</a>
+                            </div>
+                            <div class="text-center p-6 bg-gray-50 rounded-lg">
+                                <p class="text-gray-500 mb-4">No upcoming appointments</p>
+                                <a href="#booking" class="inline-block bg-indigo-600 text-white font-bold py-2 px-6 rounded-full hover:bg-indigo-700 transition-colors duration-300">Schedule Session</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chat" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">AI-Guided First-Aid Support</h2>
+            <div id="chat-box" class="chat-container bg-gray-50 p-6 rounded-xl border border-gray-200">
+                <div class="chat-message ai-message shadow-md">
+                    <p>Hello! I'm here to listen. How are you feeling today?</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 mt-6">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow p-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                <button id="send-btn" class="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M3.478 2.405a.75.75 0 01.087 1.253l5.347 4.29-5.347 4.29a.75.75 0 01-.087 1.253.75.75 0 00.58 1.253l5.748-4.621a.75.75 0 00.174-.298l.642-1.92a.75.75 0 00.001-.274l-.642-1.921a.75.75 0 00-.174-.298L4.058 1.152a.75.75 0 00-.58-1.253zM15 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM9 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75z" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <section id="journal" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">Daily Journal</h2>
+            <p class="text-center text-gray-600">Write down your thoughts to track your emotional well-being.</p>
+            <div class="max-w-xl mx-auto space-y-4">
+                <textarea id="journal-input" placeholder="What's on your mind today?" rows="10" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <div class="flex items-center justify-center">
+                    <button id="save-journal-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300">Save Entry</button>
+                </div>
+                <div id="journal-message" class="text-center text-sm font-semibold hidden"></div>
+            </div>
+        </section>
+
+        <section id="stress-check" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-bold text-center text-indigo-700 mb-6">Mental Health Assessments</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Depression Assessment Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Depression Assessment</h3>
+                        <p class="text-gray-600 text-sm mb-4">PHQ-9 questionnaire to assess depression symptoms and severity.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                5-10 minutes
+                            </span>
+                            <span class="mx-2">•</span>
+                            <span>9 questions</span>
+                        </div>
+                        <button class="start-assessment w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-300" data-assessment="depression">
+                            Start Assessment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Anxiety Assessment Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Anxiety Assessment</h3>
+                        <p class="text-gray-600 text-sm mb-4">GAD-7 screening tool for anxiety disorder symptoms.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                5-8 minutes
+                            </span>
+                            <span class="mx-2">•</span>
+                            <span>7 questions</span>
+                        </div>
+                        <button class="start-assessment w-full bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors duration-300" data-assessment="anxiety">
+                            Start Assessment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stress Assessment Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Stress Assessment</h3>
+                        <p class="text-gray-600 text-sm mb-4">PSS-10 evaluation of perceived stress levels.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                8-10 minutes
+                            </span>
+                            <span class="mx-2">•</span>
+                            <span>10 questions</span>
+                        </div>
+                        <button class="start-assessment w-full bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-amber-700 transition-colors duration-300" data-assessment="stress">
+                            Start Assessment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Assessment Content Area -->
+                <div id="assessment-content" class="md:col-span-3 hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 id="assessment-title" class="text-2xl font-bold text-gray-800"></h3>
+                            <button id="close-assessment" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Progress -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                <span id="question-progress">Question 1 of 9</span>
+                                <span id="time-remaining"></span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full">
+                                <div id="progress-bar" class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Question Area -->
+                        <div id="question-area">
+                            <h4 id="current-question" class="text-lg font-medium text-gray-800 mb-4"></h4>
+                            <div id="options-area" class="space-y-3">
+                                <!-- Options will be inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="flex justify-between mt-6">
+                            <button id="prev-question" class="px-4 py-2 text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors duration-300">Previous</button>
+                            <button id="next-question" class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Area -->
+                <div id="results-area" class="md:col-span-3 hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg text-center">
+                        <div id="score-display" class="mb-6">
+                            <div class="w-32 h-32 mx-auto relative mb-4">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50"/>
+                                    <circle class="text-indigo-600 progress-ring" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50"/>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span id="score-value" class="text-2xl font-bold text-indigo-600"></span>
+                                </div>
+                            </div>
+                            <h3 id="severity-level" class="text-xl font-bold text-gray-800 mb-2"></h3>
+                            <p id="result-message" class="text-gray-600"></p>
+                        </div>
+                        
+                        <div id="recommendations" class="text-left bg-indigo-50 p-6 rounded-xl mb-6">
+                            <h4 class="font-bold text-indigo-700 mb-3">Recommendations</h4>
+                            <ul class="space-y-2 text-gray-700">
+                                <!-- Recommendations will be inserted here -->
+                            </ul>
+                        </div>
+
+                        <div class="flex space-x-4 justify-center">
+                            <button id="retake-assessment" class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-300">
+                                Take Assessment Again
+                            </button>
+                            <button id="view-all-assessments" class="px-6 py-2 border border-indigo-600 text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 transition-colors duration-300">
+                                View All Assessments
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notice -->
+                <div class="md:col-span-3 bg-red-50 border border-red-200 p-6 rounded-2xl">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-6 h-6 text-red-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <h4 class="text-lg font-semibold text-red-700 mb-2">Important Notice</h4>
+                            <p class="text-sm text-red-600">These assessments are screening tools and not diagnostic instruments. Results should be discussed with a qualified mental health professional. If you're experiencing thoughts of self-harm, please seek immediate help.</p>
+                            <div class="mt-4 p-4 bg-white rounded-lg border border-red-100">
+                                <h5 class="font-medium text-red-700 mb-2">Crisis Support</h5>
+                                <p class="text-sm text-red-600">
+                                    National Suicide Prevention Lifeline: <strong>988</strong> or <strong>1-800-273-8255</strong><br>
+                                    Available 24/7 for emotional support
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chat" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">AI-Guided First-Aid Support</h2>
+            <div id="chat-box" class="chat-container bg-gray-50 p-6 rounded-xl border border-gray-200">
+                <div class="chat-message ai-message shadow-md">
+                    <p>Hello! I'm here to listen. How are you feeling today?</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 mt-6">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow p-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                <button id="send-btn" class="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M3.478 2.405a.75.75 0 01.087 1.253l5.347 4.29-5.347 4.29a.75.75 0 01-.087 1.253.75.75 0 00.58 1.253l5.748-4.621a.75.75 0 00.174-.298l.642-1.92a.75.75 0 00.001-.274l-.642-1.921a.75.75 0 00-.174-.298L4.058 1.152a.75.75 0 00-.58-1.253zM15 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM18 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM15 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 8.25a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM12 15.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM9 12a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75z" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <section id="journal" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">Daily Journal</h2>
+            <p class="text-center text-gray-600">Write down your thoughts to track your emotional well-being.</p>
+            <div class="max-w-xl mx-auto space-y-4">
+                <textarea id="journal-input" placeholder="What's on your mind today?" rows="10" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <div class="flex items-center justify-center">
+                    <button id="save-journal-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300">Save Entry</button>
+                </div>
+                <div id="journal-message" class="text-center text-sm font-semibold hidden"></div>
+            </div>
+        </section>
+
+        <section id="booking" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">Confidential Booking System</h2>
+            <p class="text-center text-gray-600">Schedule a one-on-one session with a mental health professional.</p>
+            <form id="booking-form" class="max-w-xl mx-auto space-y-4">
+                <input type="text" id="name" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <input type="email" id="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                
+                <div class="space-y-2">
+                    <label for="area-dropdown" class="text-gray-700 text-sm font-medium">Select Area or Type:</label>
+                    <select id="area-dropdown" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="" disabled selected>Choose an option...</option>
+                        <option value="gachibowli">Hyderabad (Gachibowli)</option>
+                        <option value="jubilee-hills">Hyderabad (Jubilee Hills)</option>
+                        <option value="hitech-city">Hyderabad (Hitech City)</option>
+                        <option value="college">College Counselor</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="counselor-dropdown" class="text-gray-700 text-sm font-medium">Choose a Counselor:</label>
+                    <select id="counselor-dropdown" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" disabled>
+                        <option value="" disabled selected>Please select an area first...</option>
+                    </select>
+                </div>
+
+                <textarea id="concern" placeholder="Briefly describe your concern (optional)" rows="4" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <input type="date" id="date" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <input type="time" id="time" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <div class="flex items-center justify-center">
+                    <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 transition-colors duration-300">Submit Booking</button>
+                </div>
+            </form>
+            <div id="booking-message" class="text-center text-green-600 font-semibold hidden"></div>
+        </section>
+        
+        <section id="resources" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">Psychoeducational Resource Hub</h2>
+            <p class="text-center text-gray-600 mb-8">Access a variety of resources to support your mental wellness journey.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 bg-gray-50 rounded-xl shadow-md space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Videos</h3>
+                    <p class="text-gray-600">Watch informative videos on managing stress, anxiety, and improving well-being.</p>
+                    <a href="#" class="inline-block text-indigo-600 font-semibold hover:underline">Explore Videos →</a>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-xl shadow-md space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Relaxation Audio</h3>
+                    <p class="text-gray-600">Listen to guided meditations and soothing soundscapes for relaxation.</p>
+                    <a href="#" class="inline-block text-indigo-600 font-semibold hover:underline">Listen Now →</a>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-xl shadow-md space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Wellness Guides</h3>
+                    <p class="text-gray-600">Download practical guides and tips in various regional languages.</p>
+                    <a href="#" class="inline-block text-indigo-600 font-semibold hover:underline">Download Guides →</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin" class="section-content bg-white p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-6">Admin Dashboard</h2>
+            <p class="text-center text-gray-600">View anonymous data trends to recognize patterns and plan interventions.</p>
+            <div id="analytics-container" class="space-y-4">
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Anonymous User IDs</h3>
+                    <p class="text-sm text-gray-500 mb-4">The User ID below is automatically generated and does not contain personal information.</p>
+                    <p id="user-id" class="text-indigo-600 font-mono text-xs break-all"></p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Forum Posts Data</h3>
+                    <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forum-data-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Requests Data</h3>
+                    <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Counselor</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Concern</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booking-data-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Wearable Data Trends</h3>
+                    <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Heart Rate (bpm)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Oxygen Saturation (%)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wearable-data-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Journal Entries</h3>
+                    <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entry</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="journal-data-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-gray-600 p-4 text-center mt-auto">
+        <p>&copy; 2024 MindSphere by Nxyen. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Quote rotation: show first quote and cycle through them every 5s
+        function rotateQuotes() {
+            const container = document.querySelector('.quote-rotation');
+            if (!container) return;
+
+            const quotes = Array.from(container.querySelectorAll('p'));
+            if (!quotes.length) return;
+
+            let idx = 0;
+            // ensure only first is visible initially
+            quotes.forEach((q, i) => {
+                q.style.display = (i === 0) ? 'block' : 'none';
+            });
+
+            setInterval(() => {
+                // hide current
+                quotes[idx].style.display = 'none';
+                // advance
+                idx = (idx + 1) % quotes.length;
+                // show next with animation
+                quotes[idx].style.display = 'block';
+                quotes[idx].style.animation = 'fadeInUp 0.8s ease-out';
+            }, 5000);
+        }
+
+        // Start rotating after DOM loads
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(rotateQuotes, 300);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(rotateQuotes, 300));
+        }
+
+        // --- UI & Navigation Logic ---
+        const sections = document.querySelectorAll('.section-content');
+        const navLinks = document.querySelectorAll('nav a');
+        
+        function showSection(sectionId) {
+            sections.forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = e.target.getAttribute('href').substring(1);
+                showSection(sectionId);
+            });
+        });
+
+        // --- Event Listeners and Logic ---
+        const authBtn = document.getElementById('auth-btn');
+        const bookingForm = document.getElementById('booking-form');
+        const bookingMessage = document.getElementById('booking-message');
+        const chatBox = document.getElementById('chat-box');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const bookingDataBody = document.getElementById('booking-data-body');
+        const journalInput = document.getElementById('journal-input');
+        const saveJournalBtn = document.getElementById('save-journal-btn');
+        const journalMessage = document.getElementById('journal-message');
+        const hrDisplay = document.getElementById('hr-display');
+        const spo2Display = document.getElementById('spo2-display');
+        const wearableDataBody = document.getElementById('wearable-data-body');
+        const journalDataBody = document.getElementById('journal-data-body');
+        const startQuizBtns = document.querySelectorAll('.start-quiz-btn');
+
+        // Booking dropdowns
+        const areaDropdown = document.getElementById('area-dropdown');
+        const counselorDropdown = document.getElementById('counselor-dropdown');
+
+        const counselorsByArea = {
+            'gachibowli': ['Dr. Ananya Sharma', 'Ms. Kavya Rao'],
+            'jubilee-hills': ['Mr. Rohan Reddy', 'Ms. Sunita Patel'],
+            'hitech-city': ['Ms. Priya Singh', 'Mr. David Raj'],
+            'college': ['College Counselor (General)']
+        };
+
+        areaDropdown.addEventListener('change', () => {
+            const selectedArea = areaDropdown.value;
+            counselorDropdown.innerHTML = '';
+            counselorDropdown.disabled = false;
+
+            if (selectedArea) {
+                const counselors = counselorsByArea[selectedArea];
+                counselors.forEach(counselor => {
+                    const option = document.createElement('option');
+                    option.value = counselor;
+                    option.textContent = counselor;
+                    counselorDropdown.appendChild(option);
+                });
+            } else {
+                counselorDropdown.disabled = true;
+                counselorDropdown.innerHTML = '<option value="" disabled selected>Please select an area first...</option>';
+            }
+        });
+
+        // --- Local Data Storage ---
+        let localForumData = [];
+        let localBookingData = [];
+        let localWearableData = [];
+        let localJournalData = [];
+
+        // IIFE for initialization
+        (async function initApp() {
+            try {
+                let userId = crypto.randomUUID();
+                document.getElementById('user-id').textContent = `User ID: ${userId}`;
+                authBtn.textContent = 'Logout (Local)';
+                
+                showSection('dashboard');
+                setupLocalListeners();
+            } catch (error) {
+                console.error("Error initializing app:", error);
+            }
+        })();
+
+        // Authentication handler is wired later (sign-in/sign-up flows attach to the same button)
+
+        // --- Admin Dashboard UI Update Functions ---
+        function updateAdminDashboard() {
+            // Update Forum Data
+            forumDataBody.innerHTML = '';
+            localForumData.forEach(data => {
+                const row = document.createElement('tr');
+                row.classList.add('bg-white');
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.message}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.timestamp}</td>`;
+                forumDataBody.appendChild(row);
+            });
+
+            // Update Booking Data
+            bookingDataBody.innerHTML = '';
+            localBookingData.forEach(data => {
+                const row = document.createElement('tr');
+                row.classList.add('bg-white');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.counselor}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.date} at ${data.time}</td>
+                    <td class="px-6 py-4 whitespace-pre-wrap text-sm text-gray-500">${data.concern}</td>
+                `;
+                bookingDataBody.appendChild(row);
+            });
+
+            // Update Wearable Data
+            wearableDataBody.innerHTML = '';
+            localWearableData.forEach(data => {
+                const row = document.createElement('tr');
+                row.classList.add('bg-white');
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.heartRate}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.spo2}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.timestamp}</td>`;
+                wearableDataBody.appendChild(row);
+            });
+            
+            // Update Journal Data
+            journalDataBody.innerHTML = '';
+            localJournalData.forEach(data => {
+                const row = document.createElement('tr');
+                row.classList.add('bg-white');
+                row.innerHTML = `<td class="px-6 py-4 whitespace-pre-wrap text-sm text-gray-500">${data.entry.substring(0, 100)}...</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${data.timestamp}</td>`;
+                journalDataBody.appendChild(row);
+            });
+        }
+
+        function setupLocalListeners() {
+            // --- AI Chatbot Logic ---
+            async function addChatMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message', 'rounded-2xl', 'shadow-md');
+                if (sender === 'user') {
+                    messageElement.classList.add('user-message');
+                } else {
+                    messageElement.classList.add('ai-message');
+                }
+                messageElement.innerHTML = `<p>${message}</p>`;
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            async function handleChatSend() {
+                const userMessage = chatInput.value.toLowerCase().trim();
+                if (!userMessage) return;
+
+                addChatMessage(userMessage, 'user');
+                chatInput.value = '';
+
+                let aiResponse;
+                if (userMessage.includes('good') || userMessage.includes('nice') || userMessage.includes('happy') || userMessage.includes('blessed') || userMessage.includes('grateful')) {
+                    aiResponse = "I'm so glad to hear you're feeling positive. It's wonderful that you're taking the time to share that feeling. How can I help you maintain that positive mindset today?";
+                } else if (userMessage.includes('bad') || userMessage.includes('sad') || userMessage.includes('depressed') || userMessage.includes('down') || userMessage.includes('not feeling well')) {
+                    aiResponse = "I understand how you feel. It's brave of you to open up about it. Please remember that you're not alone. The Tele-MANAS helpline (14416 or 1800-891-4416) is available 24/7 for support.";
+                } else if (userMessage.includes('scared') || userMessage.includes('stressed') || userMessage.includes('overwhelming') || userMessage.includes('anxious')) {
+                    aiResponse = "It's okay to feel this way. You can handle this. Take a moment to focus on your breathing. You can also reach out to the Aasra helpline at +91-9820466726 for a confidential conversation.";
+                } else if (userMessage.includes('suicide') || userMessage.includes('kill') || userMessage.includes('die')) {
+                    aiResponse = "I hear how much pain you're in. Please know that there's hope and help available. You are not alone. Please, reach out to a professional right now. You can call the Tele-MANAS helpline at 14416 or 1800-891-4416 or Aasra at +91-9820466726. A trained counselor is waiting to help you.";
+                } else {
+                    aiResponse = "I'm listening. Can you tell me more about how you're feeling? Or, you can try typing in a word like 'happy,' 'sad,' or 'stressed.'";
+                }
+                
+                setTimeout(() => {
+                    addChatMessage(aiResponse, 'ai');
+                }, 1000);
+            }
+
+            sendBtn.addEventListener('click', handleChatSend);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleChatSend();
+                }
+            });
+
+            // --- Journal Logic ---
+            saveJournalBtn.addEventListener('click', () => {
+                const entry = journalInput.value.trim();
+                if (entry) {
+                    const newEntry = {
+                        entry: entry,
+                        timestamp: new Date().toLocaleString()
+                    };
+                    localJournalData.push(newEntry);
+                    journalMessage.textContent = 'Journal entry saved successfully!';
+                    journalMessage.classList.remove('hidden', 'text-red-600');
+                    journalMessage.classList.add('text-green-600');
+                    journalInput.value = '';
+                } else {
+                    journalMessage.textContent = 'Journal entry cannot be empty.';
+                    journalMessage.classList.remove('hidden', 'text-green-600');
+                    journalMessage.classList.add('text-red-600');
+                }
+                setTimeout(() => {
+                    journalMessage.classList.add('hidden');
+                }, 3000);
+                updateAdminDashboard();
+            });
+
+            // --- Stress Check Logic (Simulated Wearable Data) ---
+            setInterval(() => {
+                const newHr = Math.floor(Math.random() * (120 - 60 + 1)) + 60;
+                const newSpo2 = Math.floor(Math.random() * (100 - 95 + 1)) + 95;
+                
+                if (hrDisplay) hrDisplay.textContent = newHr;
+                if (spo2Display) spo2Display.textContent = newSpo2;
+                
+                const newWearableData = {
+                    heartRate: newHr,
+                    spo2: newSpo2,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                localWearableData.push(newWearableData);
+                if (localWearableData.length > 10) {
+                    localWearableData.shift();
+                }
+                updateAdminDashboard();
+            }, 5000);
+
+            // --- Booking System Logic ---
+            bookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const counselor = document.getElementById('counselor-dropdown').value;
+                const concern = document.getElementById('concern').value;
+                const date = document.getElementById('date').value;
+                const time = document.getElementById('time').value;
+
+                if (!name || !email || !counselor || !date || !time) {
+                    bookingMessage.textContent = "Please fill out all required fields.";
+                    bookingMessage.classList.remove('text-green-600', 'hidden');
+                    bookingMessage.classList.add('text-red-600');
+                    return;
+                }
+                const newBooking = { name, email, counselor, concern, date, time };
+                localBookingData.push(newBooking);
+                bookingMessage.textContent = "Your booking has been successfully submitted!";
+                bookingMessage.classList.remove('text-red-600', 'hidden');
+                bookingMessage.classList.add('text-green-600');
+                bookingForm.reset();
+                updateAdminDashboard();
+            });
+
+            // --- End of Chat Logic ---
+            
+            // Assessments buttons
+            startQuizBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Quiz functionality is a placeholder. A real quiz would be displayed here!');
+                });
+            });
+            updateLocalForumUI();
+            updateAdminDashboard();
+        }
+
+        // Authentication UI & logic (Sign In / Sign Up / Forgot Password)
+        const loginOverlay = document.getElementById('login-overlay');
+        const logoutBtn = document.getElementById('auth-btn');
+
+        // Forms and tabs inside login overlay
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const forgotForm = document.getElementById('forgot-form');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const loginError = document.getElementById('login-error');
+
+        // Simple users store in localStorage under 'saarthiUsers' (email -> {name, password})
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('saarthiUsers') || '{}');
+        }
+        function saveUsers(users) {
+            localStorage.setItem('saarthiUsers', JSON.stringify(users));
+        }
+
+        // Utility: show one form and hide others
+        function showAuthForm(formId) {
+            [signinForm, signupForm, forgotForm].forEach(f => {
+                if (!f) return;
+                f.classList.add('hidden');
+            });
+            const el = document.getElementById(formId);
+            if (el) el.classList.remove('hidden');
+            // clear error
+            if (loginError) { loginError.textContent = ''; loginError.classList.add('hidden'); }
+
+            // Update active tab visual
+            authTabs.forEach(t => {
+                if (t.getAttribute('data-target') === formId) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+        }
+
+        // Wire tab buttons
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const target = tab.getAttribute('data-target');
+                showAuthForm(target);
+            });
+        });
+
+        // If already logged in, hide overlay and set welcome name
+        if (localStorage.getItem('saarthiUser')) {
+            loginOverlay.style.display = 'none';
+            const userData = JSON.parse(localStorage.getItem('saarthiUser'));
+            const welcomeMessage = document.querySelector('#dashboard h2');
+            if (welcomeMessage) welcomeMessage.textContent = `Welcome back, ${userData.name} 👋`;
+        } else {
+            // default to sign in form
+            showAuthForm('signin-form');
+        }
+
+        // Continue without login (guest) button
+        const continueBtn = document.getElementById('continue-btn');
+        if (continueBtn) {
+            continueBtn.addEventListener('click', () => {
+                const guestName = 'User';
+                localStorage.setItem('saarthiUser', JSON.stringify({ name: guestName, email: '' }));
+                const welcomeMessage = document.querySelector('#dashboard h2');
+                if (welcomeMessage) welcomeMessage.textContent = `Welcome back, ${guestName} 👋`;
+                loginOverlay.style.display = 'none';
+            });
+        }
+
+        // --- Sign up ---
+        if (signupForm) signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+
+            if (!name || !email || !password || !confirm) {
+                loginError.textContent = 'Please fill in all fields';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            if (password !== confirm) {
+                loginError.textContent = 'Passwords do not match';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            const users = getUsers();
+            if (users[email]) {
+                loginError.textContent = 'An account with this email already exists';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            users[email] = { name, password };
+            saveUsers(users);
+            // Auto sign in after sign up
+            localStorage.setItem('saarthiUser', JSON.stringify({ name, email }));
+            const welcomeMessage = document.querySelector('#dashboard h2');
+            if (welcomeMessage) welcomeMessage.textContent = `Welcome back, ${name} 👋`;
+            loginOverlay.style.display = 'none';
+        });
+
+        // --- Sign in ---
+        if (signinForm) signinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value.trim().toLowerCase();
+            const password = document.getElementById('signin-password').value;
+            if (!email || !password) {
+                loginError.textContent = 'Please enter email and password';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            const users = getUsers();
+            if (!users[email] || users[email].password !== password) {
+                loginError.textContent = 'Invalid email or password';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            const name = users[email].name || email.split('@')[0];
+            localStorage.setItem('saarthiUser', JSON.stringify({ name, email }));
+            const welcomeMessage = document.querySelector('#dashboard h2');
+            if (welcomeMessage) welcomeMessage.textContent = `Welcome back, ${name} 👋`;
+            loginOverlay.style.display = 'none';
+        });
+
+        // --- Forgot password ---
+        if (forgotForm) forgotForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+            const newPass = document.getElementById('forgot-password').value;
+            const confirm = document.getElementById('forgot-confirm').value;
+            if (!email || !newPass || !confirm) {
+                loginError.textContent = 'Please fill in all fields';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            if (newPass !== confirm) {
+                loginError.textContent = 'Passwords do not match';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            const users = getUsers();
+            if (!users[email]) {
+                loginError.textContent = 'No account found for that email';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            users[email].password = newPass;
+            saveUsers(users);
+            // optionally sign-in the user
+            const name = users[email].name || email.split('@')[0];
+            localStorage.setItem('saarthiUser', JSON.stringify({ name, email }));
+            const welcomeMessage = document.querySelector('#dashboard h2');
+            if (welcomeMessage) welcomeMessage.textContent = `Welcome back, ${name} 👋`;
+            loginOverlay.style.display = 'none';
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('saarthiUser');
+            loginOverlay.style.display = 'flex';
+            // Show sign in form on logout
+            showAuthForm('signin-form');
+            // reset forms
+            [signinForm, signupForm, forgotForm].forEach(f => { if (f) f.reset && f.reset(); });
+        });
+    </script>
+
+    <!-- Assessment Scripts -->
+    <script>
+        // Assessment data
+        const assessmentData = {
+            depression: {
+                title: "Depression Assessment (PHQ-9)",
+                description: "Screen for the presence and severity of depression",
+                questions: [
+                    {
+                        text: "Little interest or pleasure in doing things",
+                        options: ["Not at all", "Several days", "More than half the days", "Nearly every day"]
+                    },
+                    {
+                        text: "Feeling down, depressed, or hopeless",
+                        options: ["Not at all", "Several days", "More than half the days", "Nearly every day"]
+                    }
+                    // Add more questions as needed
+                ]
+            },
+            anxiety: {
+                title: "Anxiety Assessment (GAD-7)",
+                description: "Screen for anxiety symptoms",
+                questions: [
+                    {
+                        text: "Feeling nervous, anxious, or on edge",
+                        options: ["Not at all", "Several days", "More than half the days", "Nearly every day"]
+                    },
+                    {
+                        text: "Not being able to stop or control worrying",
+                        options: ["Not at all", "Several days", "More than half the days", "Nearly every day"]
+                    }
+                    // Add more questions as needed
+                ]
+            },
+            stress: {
+                title: "Stress Assessment (PSS-10)",
+                description: "Measure your current stress levels",
+                questions: [
+                    {
+                        text: "Been upset because of something that happened unexpectedly?",
+                        options: ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"]
+                    },
+                    {
+                        text: "Felt that you were unable to control the important things in your life?",
+                        options: ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"]
+                    }
+                    // Add more questions as needed
+                ]
+            }
+        };
+
+        // Initialize when DOM is loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize AssessmentManager
+            class AssessmentManager {
+                constructor() {
+                    // Initialize state
+                    this.currentAssessment = null;
+                    this.currentQuestionIndex = 0;
+                    this.userAnswers = [];
+                    
+                    // Cache DOM elements
+                    this.elements = {
+                        assessmentContent: document.getElementById('assessment-content'),
+                        resultsArea: document.getElementById('results-area'),
+                        questionProgress: document.getElementById('question-progress'),
+                        currentQuestion: document.getElementById('current-question'),
+                        optionsArea: document.getElementById('options-area'),
+                        progressBar: document.getElementById('progress-bar'),
+                        assessmentTitle: document.getElementById('assessment-title'),
+                        nextButton: document.getElementById('next-question'),
+                        prevButton: document.getElementById('prev-question'),
+                        closeButton: document.getElementById('close-assessment')
+                    };
+
+                    // Add click handlers for all assessment buttons
+                    document.querySelectorAll('.start-assessment').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const type = e.target.dataset.assessment;
+                            this.startAssessment(type);
+                        });
+                    });
+
+                    // Add navigation button handlers
+                    this.elements.nextButton.addEventListener('click', () => this.nextQuestion());
+                    this.elements.prevButton.addEventListener('click', () => this.previousQuestion());
+                    this.elements.closeButton.addEventListener('click', () => this.closeAssessment());
+
+                    console.log('Assessment Manager initialized successfully');
+                }
+            
+                initializeEventListeners() {
+                    console.log('Setting up event listeners...');
+                    // Assessment buttons
+                    document.querySelectorAll('.start-assessment').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const type = e.target.dataset.assessment;
+                            console.log('Starting assessment:', type);
+                            this.startAssessment(type);
+                        });
+                    });
+            
+                    // Navigation
+                    document.getElementById('close-assessment').addEventListener('click', this.closeAssessment);
+                    document.getElementById('next-question').addEventListener('click', this.nextQuestion);
+                    document.getElementById('prev-question').addEventListener('click', this.previousQuestion);
+                }
+            
+                startAssessment(type) {
+                    // Validate assessment type
+                    if (!assessmentData[type]) {
+                        console.error('Invalid assessment type:', type);
+                        return;
+                    }
+
+                    // Hide all assessment cards (direct parent siblings)
+                    const parentSection = this.elements.assessmentContent.parentElement;
+                    parentSection.querySelectorAll(':scope > div').forEach(div => {
+                        if (div !== this.elements.assessmentContent && div !== this.elements.resultsArea) {
+                            div.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Show assessment content
+                    this.elements.assessmentContent.classList.remove('hidden');
+                    this.elements.resultsArea.classList.add('hidden');
+                    
+                    // Update title
+                    this.elements.assessmentTitle.textContent = assessmentData[type].title;
+                    
+                    // Reset assessment state
+                    this.currentAssessment = type;
+                    this.currentQuestionIndex = 0;
+                    this.userAnswers = [];
+                    
+                    // Display the first question
+                    this.displayQuestion();
+
+                    console.log('Assessment started:', type);
+                }
+            
+                closeAssessment() {
+                    // Hide assessment content
+                    document.getElementById('assessment-content').classList.add('hidden');
+                    document.getElementById('results-area').classList.add('hidden');
+            
+                    // Show assessment cards
+                    document.querySelectorAll('.bg-white.rounded-2xl').forEach(card => {
+                        if (!card.classList.contains('shadow-lg')) {
+                            card.classList.remove('hidden');
+                        }
+                    });
+            
+                    // Reset state
+                    this.currentAssessment = null;
+                    this.currentQuestionIndex = 0;
+                    this.userAnswers = [];
+                }
+            
+                displayQuestion() {
+                    const currentAssessmentData = assessmentData[this.currentAssessment];
+                    const questions = currentAssessmentData.questions;
+                    const question = questions[this.currentQuestionIndex];
+                    
+                    // Update progress text and bar
+                    this.elements.questionProgress.textContent = `Question ${this.currentQuestionIndex + 1} of ${questions.length}`;
+                    const progress = ((this.currentQuestionIndex + 1) / questions.length) * 100;
+                    this.elements.progressBar.style.width = `${progress}%`;
+            
+                    // Display question text
+                    this.elements.currentQuestion.textContent = question.text;
+            
+                    // Create options
+                    this.elements.optionsArea.innerHTML = ''; // Clear existing options
+                    
+                    question.options.forEach((option, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'w-full p-4 text-left rounded-lg border transition-colors duration-300 ' +
+                            (this.userAnswers[this.currentQuestionIndex] === index 
+                                ? 'border-indigo-500 bg-indigo-50' 
+                                : 'border-gray-200 hover:border-indigo-500');
+                        button.textContent = option;
+                        button.onclick = () => this.selectOption(index);
+                        this.elements.optionsArea.appendChild(button);
+                    });
+            
+                    // Update navigation buttons
+                    this.elements.prevButton.style.visibility = this.currentQuestionIndex === 0 ? 'hidden' : 'visible';
+                    this.elements.nextButton.textContent = this.currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            
+                    // Create options
+                    const optionsArea = document.getElementById('options-area');
+                    optionsArea.innerHTML = '';
+                    
+                    question.options.forEach((option, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'w-full p-4 text-left rounded-lg border border-gray-200 hover:border-indigo-500 transition-colors duration-300';
+                        if (this.userAnswers[this.currentQuestionIndex] === index) {
+                            button.classList.add('border-indigo-500', 'bg-indigo-50');
+                        }
+                        button.textContent = option;
+                        button.addEventListener('click', () => this.selectOption(index));
+                        optionsArea.appendChild(button);
+                    });
+            
+                    // Update navigation buttons
+                    document.getElementById('prev-question').style.visibility = 
+                        this.currentQuestionIndex === 0 ? 'hidden' : 'visible';
+                    document.getElementById('next-question').textContent = 
+                        this.currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+                }
+            
+                selectOption(index) {
+                    this.userAnswers[this.currentQuestionIndex] = index;
+                    this.displayQuestion(); // Refresh display to show selection
+                }
+            
+                nextQuestion() {
+                    const questions = assessmentData[this.currentAssessment].questions;
+                    if (this.currentQuestionIndex < questions.length - 1) {
+                        this.currentQuestionIndex++;
+                        this.displayQuestion();
+                    } else {
+                        this.showResults();
+                    }
+                }
+            
+                previousQuestion() {
+                    if (this.currentQuestionIndex > 0) {
+                        this.currentQuestionIndex--;
+                        this.displayQuestion();
+                    }
+                }
+            
+                showResults() {
+                    // Calculate score
+                    const score = this.calculateScore();
+                    
+                    // Hide assessment content
+                    document.getElementById('assessment-content').classList.add('hidden');
+                    
+                    // Show results
+                    document.getElementById('results-area').classList.remove('hidden');
+                    document.getElementById('score-value').textContent = score;
+                    
+                    // Set up recommendations based on score
+                    const recommendations = this.getRecommendations(score);
+                    const recommendationsList = document.querySelector('#recommendations ul');
+                    recommendationsList.innerHTML = recommendations.map(rec => 
+                        `<li class="flex items-center"><span class="mr-2">•</span>${rec}</li>`
+                    ).join('');
+                }
+            
+                calculateScore() {
+                    return this.userAnswers.reduce((sum, answer) => sum + answer, 0);
+                }
+            
+                getRecommendations(score) {
+                    // Basic recommendations - you can expand these based on score ranges
+                    return [
+                        "Consider talking to a mental health professional",
+                        "Practice regular self-care activities",
+                        "Maintain a consistent sleep schedule",
+                        "Stay connected with supportive friends and family"
+                    ];
+                }
+            }
+
+            // Create instance
+            console.log('Creating AssessmentManager instance');
+            window.assessmentManager = new AssessmentManager();
+        });
+    </script>
+</body>
+</html>
